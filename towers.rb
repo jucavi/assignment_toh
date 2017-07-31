@@ -4,7 +4,6 @@ class TowerOfHanoi
 
   def initialize(discs)
     @discs = discs
-    initialize_tower
   end
 
   def populate(tower)
@@ -63,16 +62,20 @@ class TowerOfHanoi
       @tower[to] << @tower[from].pop
   end
 
-  def winer
-    puts "FANTASTIC!! you win."
+  def win?
+    @tower[3] == @copy_tower[1]
+  end
+
+  def winner_message
+    puts "Great Job!!!"
   end
 
   def play
+    initialize_tower
     welcome
     render
 
-    looping_var = true
-    while looping_var do
+    until win? do
       print "Enter move > "
       move = gets.chomp!
 
@@ -84,10 +87,7 @@ class TowerOfHanoi
       break if move == "q"
       move_disc(@from, @to)
       render
-      if @tower[3] == @copy_tower[1]
-        looping_var = false
-        winer
-      end
     end
+    winner_message if win?
   end
 end
