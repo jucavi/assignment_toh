@@ -33,29 +33,27 @@ class TowerOfHanoi
     puts "1".rjust(@discs + 10) + "2".rjust(@discs + 10) + "3".rjust(@discs + 10)
   end
 
-  def in_range(move)
-     @from, @to = move.split(",").map(&:to_i)
-    (@from.between?(1,3) && @to.between?(1,3)) ? true : false
+  def exit?(usr)
+    usr == "q"
   end
 
-  def valid_move?(move)
+  def match_format?(usr)
+    /\A\d\,\s?\d/ =~ usr
+  end
+
+  def in_range?(usr)
+    @from, @to = usr.split(",").map(&:to_i)
+    @from.between?(1,3) && @to.between?(1,3)
+  end
+
+  def valid_move?
     return false if  @tower[@from].empty?
-    return true if  @tower[@to].empty? || move == "q"
+    return true if  @tower[@to].empty?
     @tower[@from].last < @tower[@to].last
   end
 
-  def unvalid?(move)
-    if move == "q"
-      ["", true]
-    elsif /\A\d\,\s?\d/ =~ move
-      if in_range(move) && valid_move?(move)
-        ["", true]
-      else
-        ["Wrong move... enter move", false]
-      end
-    else
-      ["Wrong format... enter move", false]
-    end
+  def valid_input?(user)
+    exit?(user) || (match_format?(user) && in_range?(user) && valid_move?)
   end
 
   def move_disc(from, to)
@@ -66,28 +64,33 @@ class TowerOfHanoi
     @tower[3] == @copy_tower[1]
   end
 
+  def user_imput(message)
+    begin
+      print  "#{message}"
+      user = gets.chomp!
+    end until valid_input?(user)
+    user
+  end
+
   def winner_message
     puts "Great Job!!!"
+  end
+
+  def see_you
+    puts "See you."
   end
 
   def play
     initialize_tower
     welcome
     render
+    @message = "Enter move > "
 
     until win? do
-      print "Enter move > "
-      move = gets.chomp!
-
-      until unvalid?(move)[1] do
-        print  "#{unvalid?(move)[0]} > "
-        move = gets.chomp!
-      end
-
-      break if move == "q"
+      break if user_imput(@message) == "q"
       move_disc(@from, @to)
       render
     end
-    winner_message if win?
+    win? ? winner_message : see_you
   end
 end
