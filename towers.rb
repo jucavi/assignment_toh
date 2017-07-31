@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 class TowerOfHanoi
-  attr_accessor :tower
 
   def initialize(discs)
     @discs = discs
