@@ -14,7 +14,6 @@ class TowerOfHanoi
 
   def initialize_tower
     populate(@tower = Hash.new)
-    populate(@copy_tower = Hash.new)
   end
 
   def welcome
@@ -25,11 +24,24 @@ class TowerOfHanoi
     puts  "Current Board:"
   end
 
-  def render
-    (@discs-1).downto(0)  do |disc|
-      puts  ("o"*@tower[1][disc].to_i).rjust(@discs + 10) +  ("o"*@tower[2][disc].to_i).rjust(@discs + 10) +  ("o"*@tower[3][disc].to_i).rjust(@discs + 10)
+  def get_stack(disc_index)
+    row = ""
+    (1..3).each do |pos|
+      disc_size = @tower[pos][disc_index].to_i
+      if disc_size == 0
+        row << ' '*(2*@discs + 1)
+      else
+        row << ' '*(@discs - disc_size) + '='*(2*disc_size + 1) + ' '*(@discs - disc_size)
+      end
     end
-    puts "1".rjust(@discs + 10) + "2".rjust(@discs + 10) + "3".rjust(@discs + 10)
+    row
+  end
+
+  def render
+    (@discs - 1).downto(0) do |disc_index|
+      puts get_stack(disc_index)
+    end
+    puts ' '*(@discs) + '1' + ' '*(@discs) + ' '*(@discs) + '2' + ' '*(@discs) + ' '*(@discs) + '3' + ' '*(@discs)
   end
 
   def exit?(usr)
@@ -60,7 +72,7 @@ class TowerOfHanoi
   end
 
   def win?
-    @tower[3] == @copy_tower[1]
+    @tower[3].size == @discs
   end
 
   def user_imput(message)
